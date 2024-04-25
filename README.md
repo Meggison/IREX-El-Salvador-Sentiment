@@ -15,7 +15,7 @@ The development of an AI-driven sentiment analysis tool represents a pivotal adv
 ## Empowering Political Analysts and Policymakers
 The ultimate goal of this initiative is to empower political analysts and policymakers in El Salvador with real-time, accurate insights into public sentiment. A web interface for instant analysis and visualization will provide stakeholders with an intuitive tool for monitoring public opinion trends, enabling them to make more informed decisions and tailor their strategies to the nuances of public sentiment. By providing a clearer, more immediate picture of the political landscape, this AI-driven tool aims to enhance the responsiveness and effectiveness of political strategies and policies, ensuring they are aligned with the public’s views and concerns. This project not only stands to revolutionize the field of political analysis in El Salvador but also contributes to a more engaged, responsive political process.
 
-## The goals
+## The Goals
 The main aim of this project is to revolutionize the analysis of public sentiment towards political actors in El Salvador by developing an AI-driven sentiment analysis tool. This tool is designed to categorize opinions into positive, negative, and neutral sentiments, automating and significantly enhancing the accuracy and speed of sentiment analysis for political analysts and policymakers. The project unfolds over ten weeks, with each phase meticulously planned to ensure the successful development and deployment of the sentiment analysis tool:
 
 1. Project Kickoff: The project will commence with a formal initiation, aligning the team on objectives and developing a detailed project plan to guide the subsequent phases.
