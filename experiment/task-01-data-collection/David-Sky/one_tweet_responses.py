@@ -31,6 +31,7 @@ def tweet_to_df(df, tweet_dict):
 
 
 # Main script
+local_excel_path = "/Users/davidsky/PycharmProjectselsalvador-local"  # Change this to work on your system
 apify_actor_id = "61RPP7dywgiy0JPD0" # Tweet Scraper V2 (Pay Per Result) - X / Twitter Scraper
 python_code_name = 'one_tweet_response.py'
 one_tweet_url = input("Enter the full URL of the tweet to analyze: ")
@@ -100,9 +101,6 @@ for one_tweet_dict in client.dataset(run["defaultDatasetId"]).iterate_items():
     df = tweet_to_df(df, one_tweet_dict)
     i += 1
 
-# local_excel = f"/Users/davidsky/PycharmProjectselsalvador-local/onetweet.xlsx"
-# df.to_excel(local_excel)
-# print(f"\nWrote {len(df)} tweets to:\n\t{local_excel}")
 
 # Step 2, get the responses - will improve this
 # The conversation ID is one_tweet_id
@@ -145,9 +143,8 @@ for one_tweet_dict in client.dataset(run["defaultDatasetId"]).iterate_items():
     sample_keys = list(one_tweet_dict.keys())
 sample_df = pd.DataFrame(sample_keys)
 
-local_excel = f"/Users/davidsky/PycharmProjectselsalvador-local/{one_tweet_string}.xlsx"
-# df_conv.to_excel(local_excel)
-# print(f"\nWrote {len(df_conv)} tweets to:\n\t{local_excel}")
+local_excel = f"{local_excel_path}/{one_tweet_string}.xlsx"
+
 
 # Create a readme df
 rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'generated_on_utc', 'generated_by', 'python_code', 'Apify_actor_id'],
