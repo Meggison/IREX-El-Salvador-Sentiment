@@ -33,19 +33,24 @@ sample_list = [
 {'user': {'created_at': '2010-01-02T14:56:49.000Z', 'default_profile_image': False, 'description': 'Comisionado para los DDHH, y libertad de expresión El Salvador, profesor, protección de datos, IA y DDHH consultor y cocinero ... apasionado !!', 'fast_followers_count': 0, 'favourites_count': 322, 'followers_count': 2205, 'friends_count': 1346, 'has_custom_timelines': True, 'is_translator': False, 'listed_count': 3, 'location': 'El Salvador', 'media_count': 57, 'name': 'Andrés GUZMAN C', 'normal_followers_count': 2205, 'possibly_sensitive': False, 'profile_banner_url': 'https://pbs.twimg.com/profile_banners/101240523/1692826803', 'profile_image_url_https': 'https://pbs.twimg.com/profile_images/1758268224498454528/XxZzze7P_normal.jpg', 'screen_name': 'andresguzm', 'statuses_count': 671, 'translator_type': 'none', 'verified': True, 'withheld_in_countries': [], 'id_str': '101240523'}, 'id': '1743328759866851688', 'conversation_id': '1743328759866851688', 'full_text': 'Es importanrtante tener un  consciente colectivo para que las víctimas de los grupos terroristas denuncien sus casos ante las instituciones correspondientes y que los ilícitos no queden en la impunidad. #terroristas #elsalvador  .https://t.co/mSzhGsdAcy', 'reply_count': 0, 'retweet_count': 0, 'favorite_count': 2, 'hashtags': ['terroristas', 'elsalvador'], 'symbols': [], 'user_mentions': [], 'urls': [{'url': 'https://t.co/mSzhGsdAcy', 'expanded_url': 'https://diarioelsalvador.com/comision-de-derechos-humanos-insta-a-victimas-de-pandillas-a-denunciar/407160/', 'display_url': 'diarioelsalvador.com/comision-de-de…'}], 'media': [], 'url': 'https://twitter.com/andresguzm/status/1743328759866851688', 'created_at': '2024-01-05T17:49:00.000Z', '#sort_index': '1783961839328034808', 'view_count': 335, 'quote_count': 0, 'is_quote_tweet': False, 'is_retweet': False, 'is_pinned': False, 'is_truncated': False, 'startUrl': 'https://twitter.com/andresguzm/with_replies'},
 {'user': {'created_at': '2010-01-02T14:56:49.000Z', 'default_profile_image': False, 'description': 'Comisionado para los DDHH, y libertad de expresión El Salvador, profesor, protección de datos, IA y DDHH consultor y cocinero ... apasionado !!', 'fast_followers_count': 0, 'favourites_count': 322, 'followers_count': 2205, 'friends_count': 1346, 'has_custom_timelines': True, 'is_translator': False, 'listed_count': 3, 'location': 'El Salvador', 'media_count': 57, 'name': 'Andrés GUZMAN C', 'normal_followers_count': 2205, 'possibly_sensitive': False, 'profile_banner_url': 'https://pbs.twimg.com/profile_banners/101240523/1692826803', 'profile_image_url_https': 'https://pbs.twimg.com/profile_images/1758268224498454528/XxZzze7P_normal.jpg', 'screen_name': 'andresguzm', 'statuses_count': 671, 'translator_type': 'none', 'verified': True, 'withheld_in_countries': [], 'id_str': '101240523'}, 'id': '1599405529486409730', 'conversation_id': '1599405529486409730', 'full_text': 'Ser de la izquierda es, como ser de la derecha, una de las infinitas maneras que el hombre puede elegir para ser un imbécil: ambas, en efecto, son formas de la hemiplejía moral. Ortega y Gasset', 'reply_count': 2, 'retweet_count': 7, 'favorite_count': 30, 'hashtags': [], 'symbols': [], 'user_mentions': [], 'urls': [], 'media': [], 'url': 'https://twitter.com/andresguzm/status/1599405529486409730', 'created_at': '2022-12-04T14:09:28.000Z', '#sort_index': '1783961839328034807', 'quote_count': 2, 'is_quote_tweet': False, 'is_retweet': False, 'is_pinned': False, 'is_truncated': False, 'startUrl': 'https://twitter.com/andresguzm/with_replies'},
 ]
-use_cache=True
+use_cache=False
 
-twitter_handle="andresguzm"
-local_csv = f"/Users/davidsky/PycharmProjectselsalvador-local/twitter-{twitter_handle}.csv"
+twitter_handle="FGR_SV"
+local_csv   = f"/Users/davidsky/PycharmProjectselsalvador-local/twitter-{twitter_handle}.csv"
+local_excel = f"/Users/davidsky/PycharmProjectselsalvador-local/twitter-{twitter_handle}.xlsx"
+
 
 # Defines the values we will save
+# 2024-05-13 - add reply_count and is_retweet
 df=pd.DataFrame(columns=[
                          "url",
                          "created_at",
                          "id",
                          "conversation_id",
+                         "is_retweet",
                          "retweet_count",
                          "favorite_count",
+                         "reply_count",
                          "full_text"
                          ])
 # df.loc[0] = ['test key', 'test_value']
@@ -77,7 +82,7 @@ else:
     # Prepare the Actor input
     run_input = {
         "handles": [twitter_handle],
-        "tweetsDesired": 10,
+        "tweetsDesired": 75,
         "addUserInfo": True,
         "startUrls": [],
         "proxyConfig": { "useApifyProxy": True },
@@ -90,9 +95,11 @@ else:
     for one_tweet_dict in client.dataset(run["defaultDatasetId"]).iterate_items():
         df=tweet_to_df(df, one_tweet_dict)
 
+
 # Either way we now have a df
 
 # Write locally for now
 df.to_csv(local_csv, index=False)
-print(f"\nDone! Wrote {len(df)} tweets to:\n\t {local_csv}")
+df.to_excel(local_excel)
+print(f"\nDone! Wrote {len(df)} tweets to:\n\t {local_csv} and\n\t{local_excel}")
 
