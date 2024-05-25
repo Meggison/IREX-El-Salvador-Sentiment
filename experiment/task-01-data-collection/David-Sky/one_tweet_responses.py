@@ -34,6 +34,7 @@ def tweet_to_df(df, tweet_dict):
 local_excel_path = "/Users/davidsky/PycharmProjectselsalvador-local"  # Change this to work on your system
 apify_actor_id = "61RPP7dywgiy0JPD0" # Tweet Scraper V2 (Pay Per Result) - X / Twitter Scraper
 python_code_name = 'one_tweet_response.py'
+python_code_dagshub = 'https://dagshub.com/Omdena/IREX-El-Salvador-Sentiment/src/main/experiment/task-01-data-collection/David-Sky/one_tweet_responses.py'
 one_tweet_url = input("Enter the full URL of the tweet to analyze: ")
 one_tweet_id = str(one_tweet_url.split('/')[-1])
 one_tweet_user = one_tweet_url.split('/')[-3]
@@ -147,8 +148,8 @@ local_excel = f"{local_excel_path}/{one_tweet_string}.xlsx"
 
 
 # Create a readme df
-rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'generated_on_utc', 'generated_by', 'python_code', 'Apify_actor_id'],
-           'Notes': [one_tweet_url, one_tweet_id, len(df_conv), datetime.utcnow(), generated_by, python_code_name, apify_actor_id]
+rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'generated_on_utc', 'generated_by', 'python_code', 'dagshub_link', 'Apify_actor_id'],
+           'Notes': [one_tweet_url, one_tweet_id, len(df_conv), datetime.utcnow(), generated_by, python_code_name, python_code_dagshub, apify_actor_id]
            }
 rm_df = pd.DataFrame(rm_data)
 
