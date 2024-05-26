@@ -1,3 +1,5 @@
+import os
+
 from apify_client import ApifyClient
 import pandas as pd
 # import pygsheets
@@ -10,6 +12,7 @@ import getpass
 #
 # Retrieve all the responses
 #
+# V1.1 - read the API key from a system variable if it is set, otherwise ask
 # v1.0 - some repeated code that should really be cleaned up
 #   getpass is used to calculate the generated_by string for the Readme and can be replaced by a simple string if there
 #        is a problem - hasn't been tested on Windows, only the Mac
@@ -17,6 +20,12 @@ try:
     generated_by = getpass.getuser()
 except:
     generated_by = 'unknown_user'
+
+try: # V1.1
+    your_api_token = os.environ.get('APIFY_TOKEN')
+except:
+    your_api_token = None
+    print("Local system variable APIFY_TOKEN not set, will prompt for token.")
 
 def tweet_to_df(df, tweet_dict):
     items_to_collect = df.columns.tolist()
@@ -42,14 +51,16 @@ one_tweet_user = one_tweet_url.split('/')[-3]
 one_tweet_string = f"{one_tweet_user}_X_replies_{one_tweet_id}"
 
 print(one_tweet_string)
-
-your_api_token = input("Enter your personal Apify token - or enter to quit: ")
-if len(your_api_token) < 2:
-    print("Quiting\n")
-elif len(your_api_token) < 40:
-    print(f"Quiting now - token seems too short - only {len(your_api_token)} characters")
+if your_api_token is not None:
+    print(f"Using Apify token from system variable APIFY_TOKEN: '{your_api_token[:4]}...{your_api_token[-4:]}'")
 else:
-    print("Token seems long enough, attempting to initialize with the token")
+    your_api_token = input("Enter your personal Apify token - or enter to quit: ")
+    if len(your_api_token) < 2:
+        print("Quiting\n")
+    elif len(your_api_token) < 40:
+        print(f"Quiting now - token seems too short - only {len(your_api_token)} characters")
+    else:
+        print("Token seems long enough, attempting to initialize with the token")
 
 # Otherwise - Initialize the ApifyClient with your Apify API token
 try:
