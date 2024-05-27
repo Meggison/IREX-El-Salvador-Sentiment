@@ -11,6 +11,7 @@ import getpass
 #
 # Retrieve all the responses
 #
+# V3.0 - support a text file with a list of tweets to process
 # V2.1 - bit more code cleanup - still expects a single Tweet to process, no list support yet
 # V2.0 - rework the code to use more functions, clean up the code and add a main()
 # V1.1 - read the API key from a system variable if it is set, otherwise ask
@@ -54,6 +55,20 @@ def tweet_to_df(df, tweet_dict):
     # df._append(new_row, ignore_index=True)
     return df
 
+def get_tweet_list(filename):
+    """Given a filename, load the file if possible, and create a list with the value of each line"""
+    lines_list = []
+    try:
+        # Open the file and read the lines
+        with open(filename, 'r') as file:
+            for line in file:
+                stripped_line = line.strip()  # Strip any leading/trailing whitespace (including newline characters)
+                if stripped_line:  # Skip empty lines
+                    lines_list.append(stripped_line)  # Add the stripped line to the list
+    except:
+        print(f"ERROR 704: Unable to open and process the file:\n\t>{filename}<")
+        exit(-704)
+    return lines_list
 
 # Main script
 def main():
@@ -115,49 +130,70 @@ def main():
 
 
     # Get the URL of the tweet to analyze - todo - define multiple strings and loop through them
-    one_tweet_url = input("Enter the full URL of the tweet to analyze: ")
-    one_tweet_id = str(one_tweet_url.split('/')[-1])
-    one_tweet_user = one_tweet_url.split('/')[-3]
-    one_tweet_string = f"{one_tweet_user}_X_replies_{one_tweet_id}"
-    print(f"Will process the tweet: {one_tweet_string}")
+    print("Two options:\n(1) string that starts with http will be processed as a single tweet, or\n(2) otherwise will be considered a txt file with one line per URL")
+    to_process_inp = input("Enter input for tweet(s) to analyze: ")
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Step 1: get the original Tweet
-    run_input = {
-        "startUrls": [one_tweet_url],
-        "maxItems": 300,
-    }
-    # Define the columns we want from this APIfy call
-    df_orig = pd.DataFrame(columns=column_list)
-    df_initial_tweet = call_apify_client(reason_text="original tweet", apify_client=client, tweet_url=one_tweet_url, actor_id=apify_actor_id, actor_input=run_input, df=df_orig)
+    # Is it a single tweet or a txt file with a list? Either way, create a list
+    if to_process_inp.startswith('http'):
+        # Just a single tweet
+        to_process_list = [to_process_inp]
+    else:
+        # Expect a filename with the list of tweets, one per line - input txt like:
+        # /Users/davidsky/PycharmProjectselsalvador-local/tweet_list_to_process.txt
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Step 2, get the responses
-    run_input_conv = {
-        "conversationIds": [one_tweet_id],  # The conversation ID is the long numeric string at the end of one_tweet_id
-        "maxItems": 300,
-    }
-    df_conv = pd.DataFrame(columns=column_list)
-    df_conv_tweets = call_apify_client(reason_text="response tweets", apify_client=client, tweet_url=one_tweet_id, actor_id=apify_actor_id, actor_input=run_input_conv, df=df_conv)
+        # create to_process_list from the file
+        to_process_list = get_tweet_list(filename=to_process_inp)
+        print("Will process each of the following URLs:")
+        for one_test in to_process_list:
+            print(f"\t- {one_test}")
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # Final step, create the Excel file with multiple tabs
-    local_excel = f"{local_excel_path}/{one_tweet_string}.xlsx"
+    # Now run through all the values in to_process_list
+    for one_tweet_url in to_process_list:
+        print(f"Process the single URL {one_tweet_url}")
+        one_tweet_id = str(one_tweet_url.split('/')[-1])
+        one_tweet_user = one_tweet_url.split('/')[-3]
+        one_tweet_string = f"{one_tweet_user}_X_replies_{one_tweet_id}"
+        print(f"Will process the tweet: {one_tweet_string}")
 
-    # Create a readme df
-    rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'generated_on_utc', 'generated_by', 'python_code', 'dagshub_link', 'Apify_actor_id'],
-               'Notes': [one_tweet_url, one_tweet_id, len(df_conv), datetime.utcnow(), generated_by, python_code_name, python_code_dagshub, apify_actor_id]
-               }
-    rm_df = pd.DataFrame(rm_data)
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        # Step 1: get the original Tweet
+        run_input = {
+            "startUrls": [one_tweet_url],
+            "maxItems": 300,
+        }
+        # Define the columns we want from this APIfy call
+        df_orig = pd.DataFrame(columns=column_list)
+        df_initial_tweet = call_apify_client(reason_text="original tweet", apify_client=client, tweet_url=one_tweet_url, actor_id=apify_actor_id, actor_input=run_input, df=df_orig)
 
-    # Write each of these dataframes to one Excel spreadsheet
-    with pd.ExcelWriter(local_excel, engine='xlsxwriter') as writer:
-        # Write each DataFrame to a different sheet
-        df_conv_tweets.to_excel(writer, sheet_name='responses', index=False)
-        df_initial_tweet.to_excel(writer, sheet_name='initial_tweet', index=False)
-        rm_df.to_excel(writer, sheet_name='Readme', index=False)
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        # Step 2, get the responses
+        run_input_conv = {
+            "conversationIds": [one_tweet_id],  # The conversation ID is the long numeric string at the end of one_tweet_id
+            "maxItems": 300,
+        }
+        df_conv = pd.DataFrame(columns=column_list)
+        df_conv_tweets = call_apify_client(reason_text="response tweets", apify_client=client, tweet_url=one_tweet_id, actor_id=apify_actor_id, actor_input=run_input_conv, df=df_conv)
 
-    print(f"\nCreated Excel file:\n\t{local_excel}")
+        # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        # Final step, create the Excel file with multiple tabs
+        local_excel = f"{local_excel_path}/{one_tweet_string}.xlsx"
+
+        # Create a readme df
+        rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'generated_on_utc', 'generated_by', 'python_code', 'dagshub_link', 'Apify_actor_id'],
+                   'Notes': [one_tweet_url, one_tweet_id, len(df_conv), datetime.utcnow(), generated_by, python_code_name, python_code_dagshub, apify_actor_id]
+                   }
+        rm_df = pd.DataFrame(rm_data)
+
+        # Write each of these dataframes to one Excel spreadsheet
+        with pd.ExcelWriter(local_excel, engine='xlsxwriter') as writer:
+            # Write each DataFrame to a different sheet
+            df_conv_tweets.to_excel(writer, sheet_name='responses', index=False)
+            df_initial_tweet.to_excel(writer, sheet_name='initial_tweet', index=False)
+            rm_df.to_excel(writer, sheet_name='Readme', index=False)
+
+        print(f"\nCreated Excel file:\n\t{local_excel}")
+        # End of processing one row in the list
+
     # End of main()
 
 if __name__ == "__main__":
