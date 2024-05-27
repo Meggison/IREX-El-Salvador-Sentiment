@@ -11,6 +11,7 @@ import getpass
 #
 # Retrieve all the responses
 #
+# V2.1 - bit more code cleanup - still expects a single Tweet to process, no list support yet
 # V2.0 - rework the code to use more functions, clean up the code and add a main()
 # V1.1 - read the API key from a system variable if it is set, otherwise ask
 # v1.0 - some repeated code that should really be cleaned up
@@ -36,8 +37,8 @@ def call_apify_client(reason_text, apify_client, tweet_url, actor_id, actor_inpu
         print(format(i, '3'), end='...')
         df = tweet_to_df(df, one_tweet_dict)
         i += 1
-        if i % 30 == 0:
-            print("\n")
+        if i % 30 == 1:
+            print("")
     print(" rows processed.\n")
     return df
 
@@ -56,22 +57,24 @@ def tweet_to_df(df, tweet_dict):
 
 # Main script
 def main():
+    # Who is running the script? Will add this detail to the Readme tab -> generated_by row
     try:
         generated_by = getpass.getuser()
     except:
         generated_by = 'unknown_user'
 
-    try:  # V1.1
+    try:  # V1.1 - save having to ask for the APIfy token each time the script is run
         your_api_token = os.environ.get('APIFY_TOKEN')
     except:
         your_api_token = None
         print("Local system variable APIFY_TOKEN not set, will prompt for token.")
+
     # Variables we will need
     local_excel_path = "/Users/davidsky/PycharmProjectselsalvador-local"  # Change this to work on your system
-    apify_actor_id = "61RPP7dywgiy0JPD0" # Tweet Scraper V2 (Pay Per Result) - X / Twitter Scraper
+    apify_actor_id = "61RPP7dywgiy0JPD0"  # Tweet Scraper V2 (Pay Per Result) - X / Twitter Scraper - https://apify.com/apidojo/tweet-scraper
     python_code_name = 'one_tweet_response.py'
     python_code_dagshub = 'https://dagshub.com/Omdena/IREX-El-Salvador-Sentiment/src/main/experiment/task-01-data-collection/David-Sky/one_tweet_responses.py'
-    column_list = [ # The set of columns we will use to create the df from the APIfy call
+    column_list = [  # The set of columns we will use to create the df from the APIfy call
         "url",
         "createdAt",
         "id",
@@ -87,12 +90,7 @@ def main():
         "text"
     ]
 
-    # Get the URL of the tweet to analyze - todo - define multiple strings and loop through them
-    one_tweet_url = input("Enter the full URL of the tweet to analyze: ")
-    one_tweet_id = str(one_tweet_url.split('/')[-1])
-    one_tweet_user = one_tweet_url.split('/')[-3]
-    one_tweet_string = f"{one_tweet_user}_X_replies_{one_tweet_id}"
-    print(f"Will process the tweet: {one_tweet_string}")
+
 
     # Get the Apify token and connect
     if your_api_token is not None:
@@ -114,6 +112,14 @@ def main():
         exit(-141)
 
     print("\n\nSuccess: Connected to APIfy with token\n\n")
+
+
+    # Get the URL of the tweet to analyze - todo - define multiple strings and loop through them
+    one_tweet_url = input("Enter the full URL of the tweet to analyze: ")
+    one_tweet_id = str(one_tweet_url.split('/')[-1])
+    one_tweet_user = one_tweet_url.split('/')[-3]
+    one_tweet_string = f"{one_tweet_user}_X_replies_{one_tweet_id}"
+    print(f"Will process the tweet: {one_tweet_string}")
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Step 1: get the original Tweet
