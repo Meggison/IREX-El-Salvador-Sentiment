@@ -5,12 +5,15 @@ import pandas as pd
 from datetime import datetime
 import xlsxwriter
 import getpass
+import time
 
 # Given a single tweet URL like
 #    https://twitter.com/MaxKevinC/status/1781174881050128396
 #
 # Retrieve all the responses
 #
+script_v = "V3.1"
+# V3.1 - add location and when the user started using twitter
 # V3.0 - support a text file with a list of tweets to process
 # V2.1 - bit more code cleanup - still expects a single Tweet to process, no list support yet
 # V2.0 - rework the code to use more functions, clean up the code and add a main()
@@ -49,9 +52,29 @@ def tweet_to_df(df, tweet_dict):
     new_row = len(df)
     # new_row = df.iloc[0:1].copy()
     for key, value in tweet_dict.items():
-        if key in items_to_collect:
-            # print(key, ":", value)
-            df.loc[new_row, key] = value
+        # Need two cases - want
+        #       author__location - maybe have: author__location - then save
+        #       author__createdAt
+        # print(f"Consider >{key}<")
+        if key == 'author':
+            # Hard coded values - sorry!
+            # See if there is a author__location
+            sub_value = value['location']
+            df.loc[new_row, 'author__location'] = sub_value
+            # And author_createdAt
+            sub_value2 = value['createdAt']
+            parsed_date = datetime.strptime(sub_value2, '%a %b %d %H:%M:%S %z %Y')
+
+            # Format the datetime object into an ISO formatted date string
+            iso_formatted_date = parsed_date.strftime('%Y-%m-%d')
+
+            df.loc[new_row, 'author__createdAt'] = iso_formatted_date
+
+        else:
+            # And the rest of the top level values
+            if key in items_to_collect:
+                # print(key, ":", value)
+                df.loc[new_row, key] = value
     # df._append(new_row, ignore_index=True)
     return df
 
@@ -102,6 +125,8 @@ def main():
         "likeCount",
         "replyCount",
         "lang",
+        "author__createdAt",
+        "author__location",
         "text"
     ]
 
@@ -128,7 +153,7 @@ def main():
 
     print("\n\nSuccess: Connected to APIfy with token\n\n")
 
-
+    start_time = time.perf_counter()
     # Get the URL of the tweet to analyze - todo - define multiple strings and loop through them
     print("Two options:\n(1) string that starts with http will be processed as a single tweet, or\n(2) otherwise will be considered a txt file with one line per URL")
     to_process_inp = input("Enter input for tweet(s) to analyze: ")
@@ -177,10 +202,10 @@ def main():
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # Final step, create the Excel file with multiple tabs
         local_excel = f"{local_excel_path}/{one_tweet_string}.xlsx"
-
+        elapsed_time = time.perf_counter() - start_time
         # Create a readme df
-        rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'generated_on_utc', 'generated_by', 'python_code', 'dagshub_link', 'Apify_actor_id'],
-                   'Notes': [one_tweet_url, one_tweet_id, len(df_conv), datetime.utcnow(), generated_by, python_code_name, python_code_dagshub, apify_actor_id]
+        rm_data = {'Readme': ['Initial URL', 'Conversation ID', 'response count', 'script_length_sec', 'generated_on_utc', 'generated_by', 'python_code', 'script_version', 'dagshub_link', 'Apify_actor_id'],
+                   'Notes': [one_tweet_url, one_tweet_id, len(df_conv), elapsed_time, datetime.utcnow(), generated_by, python_code_name, script_v, python_code_dagshub, apify_actor_id]
                    }
         rm_df = pd.DataFrame(rm_data)
 
