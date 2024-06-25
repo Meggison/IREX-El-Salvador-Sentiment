@@ -48,6 +48,7 @@ def preprocess_text(text):
     filtered_tokens = [token for token in tokens if token not in stop_words]
     # Reconstruct the text
     processed_text = ' '.join(filtered_tokens)
+
     return processed_text
 
 # Function to apply lemmatization and stemming to text
@@ -67,6 +68,7 @@ def lemmatize_and_stem(text):
 def clean_pipeline(df):
     # Map sentiment classes to numerical labels
     sentiment_mapping = {'POS': 0, 'NEU': 1, 'NEG': 2}
+    
     df['sentiment_numeric'] = df[label_column].map(sentiment_mapping)
 
     # Apply preprocessing, lemmatization, and stemming to the 'Text' column
