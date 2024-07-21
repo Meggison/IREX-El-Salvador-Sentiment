@@ -99,6 +99,9 @@ MODEL_KEY = ""
 * `APIFY_TOKEN`: Token for the [Tweet Scraper V2 (Pay Per Result) - X / Twitter Scraper](https://apify.com/apidojo/tweet-scraper).
 * `MODEL_KEY`: Key used to login to the [Hugging Face](https://huggingface.co/) platform to access the gated model developed for this project, which can be found [here](https://huggingface.co/sagar213/bert-base-spanish-wwm-uncased-finetuned-political_elsalvadore).
 
+Further installation steps are included in the application's startup procedure at `app.py`, such as the login to Hugging Face to get access to the gated Model, and the check for NLTK library additional downloads, which require files present in the repository to perform the install the first time the application is deployed to a new platform.
+
+
 ## Modules directory
 
 This directory hosts several files with different kinds of auxiliary/utilitarian functions that assist in the application's startup or complement the application's main pages, performing data transformations and building visualizations.
