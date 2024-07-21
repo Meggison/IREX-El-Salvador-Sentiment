@@ -154,8 +154,8 @@ Contains one file per streamlit page present at the main menu.
         <td><img src="src/dashboard1.png" alt="Dashboard Top" style="height: 350px;"></td>
     </tr>
     <tr>
-        <th>Dashboard - Middle</th>
-        <th>Dashboard - Bottom</th>
+        <th>Dashboard Page - Middle</th>
+        <th>Dashboard Page - Bottom</th>
     </tr>
     <tr>
         <td><img src="src/dashboard2.png" alt="Dashboard Middle" style="height: 350px;"></td>
