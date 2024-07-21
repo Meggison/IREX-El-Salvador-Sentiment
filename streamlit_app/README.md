@@ -12,7 +12,7 @@
   <summary>Click here to expand the application's file structure graphic</summary>
 
 ```
-streamlit_app
+IREX-El-Salvador-Sentiment-Tool
 +---.streamlit
 |   config.toml
 |   secrets.toml
@@ -35,7 +35,15 @@ streamlit_app
 |   |   \---punkt
 |   |   |   punkt.zip
 |   |
-|   
+|  
++---src
+|   analyse1.png
+|   analyse2.png
+|   dashboard1.png
+|   dashboard2.png
+|   dashboard3.png
+|   home.png
+|
 +---st_pages
 |   __init__.py
 |   about.py
@@ -125,3 +133,32 @@ Contains one file per streamlit page present at the main menu.
 
 * `app.py` is the file where the app gets launched from. It'll setup app's tab name, run a couple small functions setting session variables, cache the data and resouces needed to run the app, and call the sidebar and home page. It works as a mono page app.
 
+## Screenshots
+
+
+<table>
+    <tr>
+        <th>Home Page</th>
+        <th>Analysis Page - Options</th>
+    </tr>
+    </tr>
+        <td><img src="src/home.png" alt="Home" style="height: 350px;"></td>
+        <td><img src="src/analyse1.png" alt="Actor Options" style="height: 350px;"></td>
+    </tr>
+    <tr>
+        <th>Analysis Page - Datasets</th>
+        <th>Dashboard Page - Top</th>
+    </tr>
+    <tr>
+        <td><img src="src/analyse2.png" alt="Datasets" style="height: 350px;"></td>
+        <td><img src="src/dashboard1.png" alt="Dashboard Top" style="height: 350px;"></td>
+    </tr>
+    <tr>
+        <th>Dashboard - Middle</th>
+        <th>Dashboard - Bottom</th>
+    </tr>
+    <tr>
+        <td><img src="src/dashboard2.png" alt="Dashboard Middle" style="height: 350px;"></td>
+        <td><img src="src/dashboard3.png" alt="Dashboard Bottom" style="height: 350px;"></td>
+    </tr>
+</table>
