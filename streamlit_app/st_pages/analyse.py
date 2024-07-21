@@ -86,7 +86,12 @@ def analyse_page():
 
         index = None if st.session_state["selected_actor"] is None else options.index(st.session_state["selected_actor"])
 
-        selected_actor = st.selectbox("Seleccione un actor político", options, index=index, placeholder="Seleccione un actor político")
+        selected_actor = st.selectbox(
+            "Seleccione un actor político", 
+            options, 
+            index=index, 
+            placeholder="Seleccione un actor político"
+            )
 
         if selected_actor and selected_actor != st.session_state["selected_actor"]:
             df_author = [value for dictionary in datasets[selected_actor] for key, value in dictionary.items() if 'comments' not in key][0]

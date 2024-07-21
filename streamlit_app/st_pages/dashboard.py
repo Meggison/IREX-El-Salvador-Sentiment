@@ -52,7 +52,7 @@ def dashboard():
                     st.download_button(
                         label="Bajar PDF",
                         data=pdf_data,
-                        file_name="sentiment_analysis_report.pdf",
+                        file_name="reporte_analisis_sentimiento.pdf",
                         use_container_width=True,
                     )
             with cols[1]:
