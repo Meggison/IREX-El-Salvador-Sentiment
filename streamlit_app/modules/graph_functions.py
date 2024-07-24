@@ -67,7 +67,7 @@ def most_common_trigrams(df, pdf=False):
     colors = ["#ff2b2b", "#83c9ff", "#0068c9"]
     fig = make_subplots(rows=1, cols=3)
 
-    sentiment_list = ["Positive", "Neutral", "Negative"]
+    sentiment_list = ["Positivo", "Neutral", "Negativo"]
 
     for i, sentiment_label in enumerate(sentiment_list):
         texts = df[df['sentiment_label'] == sentiment_label]["cleaned_text"]
