@@ -28,7 +28,7 @@ The main aim of this project is to revolutionize the analysis of public sentimen
 8. Project Finalization and Report Preparation: The project will be finalized, with all components thoroughly reviewed and confirmed to be operating as intended. A comprehensive final report will be compiled, detailing model performance, project outcomes, and insights derived from the analysis.
 
 
-________________________________
+____________________________________________________________________________________________________________________
 
 
 # Desarrollo de una Herramienta de Análisis de Sentimientos Impulsada por IA para Actores Políticos en El Salvador
